@@ -17,6 +17,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     JLabel displayBullets = new JLabel();
     JLabel displayHealth=new JLabel();
 
+    boolean intersectplatform = false;
     Timer timer;
     Warrior m1;
     Bullet bullet;
@@ -25,15 +26,19 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     Zombies z1;
     Image bg;//background image
     Timer bulletSpawnTimer;
+    Timer zombieSpawnTimer;
     final int BULLET_SPAWN_INTERVAL = 8000; // 8 seconds
-
+    final int ZOMBIE_SPAWN_INTERVAL = 10000;
     boolean bulletActive = false;
-    boolean zombieAlive = true;
+
     boolean warriorAlive = true;
 
     Bullet bullet2, bullet3, bullet4, bullet5, bullet6;
+//    Ladder l1;
     ArrayList<Platform> platforms = new ArrayList<>();
     ArrayList<Bullet> bullets = new ArrayList<>();
+    ArrayList<Zombies> zombies = new ArrayList<>();
+    ArrayList<Ladder> ladders = new ArrayList<>();
     Random random=new Random();
 
     GamePanel() {
@@ -44,7 +49,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         bullet3 = new Bullet(50, 300, "/bullet.png");
         bullet4 = new Bullet(750, 100, "/bullet.png");
         bullet5 = new Bullet(195, 450, "/bullet.png");
-        //bullet6 = new Bullet(m1.x, m1.y,"/bullet.png");
+
+//        l1 = new Ladder(350,320,"./ladder.png");
 
         bullets.add(bullet2);
         bullets.add(bullet3);
@@ -56,13 +62,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         plat3 = new Platform(700, 150, "./platform.png");
         plat4 = new Platform(700, 500, "./platform.png");
         plat5 = new Platform(20 + 175, 500, "./platform.png");
-
-        /*
-        plat1 =  new Platform(550,550,"./platform.png");
-        plat2 =  new Platform(20,200,"./platform.png");
-        plat3 =  new Platform(950,150,"./platform.png");
-        plat4 =  new Platform(800,350,"./platform.png");
-        plat5 =  new Platform(175,400,"./platform.png");*/
 
         platforms.add(plat1);
         platforms.add(plat2);
@@ -88,13 +87,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         displayHealth.setBounds(800, 830, 20, 20);
         this.add(displayHealth);
 
-
-
-        //createBulletPickups();
-
         bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg2.png"))).getImage();
 
         z1 = new Zombies(700, 235, "/zombies-01.png");
+
+        zombies.add(z1);
         addKeyListener(this);
         setFocusable(true);
         this.requestFocusInWindow();
@@ -102,24 +99,24 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         timer.start();
         bulletSpawnTimer = new Timer(BULLET_SPAWN_INTERVAL, this);
         bulletSpawnTimer.start();
+        zombieSpawnTimer = new Timer(ZOMBIE_SPAWN_INTERVAL, this);
+        zombieSpawnTimer.start();
         repaint();
     }
 
-//    private void createBulletPickups() {
-//        // Clear existing bullets
-//        bullets.clear();
-//
-//        // Create new bullet pickups at random positions
-//        bullets.add(new Bullet(random.nextInt(1200), random.nextInt(600) + 100, "/bullet.png"));
-//        bullets.add(new Bullet(random.nextInt(1200), random.nextInt(600) + 100, "/bullet.png"));
-//        bullets.add(new Bullet(random.nextInt(1200), random.nextInt(600) + 100, "/bullet.png"));
-//        bullets.add(new Bullet(random.nextInt(1200), random.nextInt(600) + 100, "/bullet.png"));
-//    }
+
 
     private void spawnRandomBullet() {
         int x = random.nextInt(1400);  // Random x within screen width
         int y = random.nextInt(800);   // Random y within screen height
         bullets.add(new Bullet(x, y, "/bullet.png"));
+        repaint();
+    }
+
+    private void spawnZombie(){
+        int x = random.nextInt(1400);  // Random x within screen width
+        int y = random.nextInt(800);   // Random y within screen height
+        zombies.add(new Zombies(x, y, "/zombies-01.png"));
         repaint();
     }
 
@@ -132,9 +129,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             m1.draw(g);
             bullet.draw(g);  // summon bullet
         }
-        if (zombieAlive) {
-            z1.draw(g);
-        }
+
 
         for (Platform p : platforms) {
             p.draw(g);
@@ -147,6 +142,14 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         }
 
+        for (Zombies z : zombies) {
+            if (z.zombieAlive) {
+                z.draw(g);
+            }
+
+        }
+//
+//        l1.draw(g);
         displayScore.setText("Score: " + score);
         displayBullets.setText("Bullet Count: " + bulletcount);
         displayHealth.setText("Health: " + Math.max(0, m1.health));
@@ -195,63 +198,69 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             return;
         }
 
-        Rectangle z1Rect = new Rectangle(z1.x, z1.y, 121, 211);
+        if (e.getSource() == zombieSpawnTimer) {
+            spawnZombie();
+            return;
+        }
+
         Rectangle bulletRect = new Rectangle(bullet.x, bullet.y, 50, 50);
         Rectangle player = new Rectangle(m1.x, m1.y, 100, 136);
 
 
-        if (zombieAlive) {
-            z1.move(z1.dx, 0);
+        for(Zombies z:zombies){
+            Rectangle z1Rect = new Rectangle(z.x, z.y, 121, 211);
+            if (z.zombieAlive) {
+                z.move(z.dx, 0);
 
-            if (player.intersects(z1Rect)) {
-                if (!z1.justHitPlayer) {
-                    // Only damage player if this is a new collision
-                    m1.health -= 10;
-                    z1.justHitPlayer = true;
-                    z1.dx *= -1;  // Make zombie turn around
+                if (player.intersects(z1Rect)) {
+                    if (!z.justHitPlayer) {
+                        // Only damage player if this is a new collision
+                        m1.health -= 10;
+                        z.justHitPlayer = true;
+                        z.dx *= -1;  // Make zombie turn around
 
-                    if (m1.health <= 0) {
-                        warriorAlive = false;
-                        m1.health = 0;
+                        if (m1.health <= 0) {
+                            warriorAlive = false;
+                            m1.health = 0;
+                        }
                     }
+                } else {
+                    // Reset flag when not colliding
+                    z.justHitPlayer = false;
                 }
-            } else {
-                // Reset flag when not colliding
-                z1.justHitPlayer = false;
-            }
 
-            if (z1.x >= 1250 || z1.x < 0) {
-                z1.dx *= -1;
+                if (z.x >= 1250 || z.x < 0) {
+                    z.dx *= -1;
+                }
+            }
+            if (!bulletActive) {
+                bullet.x = m1.x + 50;
+                bullet.y = m1.y + 68;
+            } else {
+                bullet.move(10, 0);
+                if (bullet.x > 1500) {
+                    bulletActive = false;
+                }
+
+                if (bulletRect.intersects(z1Rect) && z.zombieAlive) {
+                    z1.dx = 0;
+                    z.zombieAlive = false;
+                    bulletActive = false;
+                    score += 1;
+                }
             }
         }
-        if (!bulletActive) {
-            bullet.x = m1.x + 50;
-            bullet.y = m1.y + 68;
-        } else {
-            bullet.move(10, 0);
-            if (bullet.x > 1500) {
-                bulletActive = false;
-            }
-//            if(bulletRect.intersects(z1Rect)){
-//                //System.out.println("Intersetkj");
-//                z1.dx = 0;
-//                zombieAlive = false;
-//                bulletActive = false;
-//                score +=1;
-////                z1.dx = 0;
-////                zombieAlive = false;
-////                bulletActive = false;
-////                if (!zombieAlive){
-////                score +=1;
-////                }
-//            }
-            if (bulletRect.intersects(z1Rect) && zombieAlive) {
-                z1.dx = 0;
-                zombieAlive = false;
-                bulletActive = false;
-                score += 1;
-            }
-        }
+//
+//        Rectangle ladderTop = new Rectangle((l1.x+100)/2, l1.y, 100/4, 60);
+//        Rectangle ladderBottom = new Rectangle((l1.x+100)/2, l1.y+108, 100/4, 70);
+//        if(player.intersects(ladderTop)){
+//            m1.move(0,168);
+//        }
+//        if (player.intersects(ladderBottom)){
+//            m1.move(0,-168);
+//        }
+
+
 
         if (m1.y > 900) {
             m1.y = 0;
@@ -263,9 +272,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         int cy = 0;
         for (Platform p : platforms) {
-            Rectangle plat = new Rectangle(p.x, p.y, 100, 183);
+            Rectangle plat = new Rectangle(p.x, p.y,  p.img.getWidth(null), 107);
             if (!player.intersects(plat)) {
-                cy = 15;
+                cy=15;
             } else {
                 cy = 0;
                 break;
