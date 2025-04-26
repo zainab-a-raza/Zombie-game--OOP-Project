@@ -250,7 +250,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                 }
             }
         }
-//
+
+
 //        Rectangle ladderTop = new Rectangle((l1.x+100)/2, l1.y, 100/4, 60);
 //        Rectangle ladderBottom = new Rectangle((l1.x+100)/2, l1.y+108, 100/4, 70);
 //        if(player.intersects(ladderTop)){
