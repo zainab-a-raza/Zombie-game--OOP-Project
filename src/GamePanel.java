@@ -6,12 +6,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
-    int score = 0;
-    int bulletcount = 5;
+   protected int score = 0;
+   protected int bulletcount = 5;
+   protected int gameOver = 1;
 
     JLabel displayScore = new JLabel();
     JLabel displayBullets = new JLabel();
@@ -23,22 +23,26 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     Bullet bullet;
     int key;
     Platform plat1, plat2, plat3, plat4, plat5;
-    Zombies z1;
-    Image bg;//background image
-    Timer bulletSpawnTimer;
-    Timer zombieSpawnTimer;
-    final int BULLET_SPAWN_INTERVAL = 8000; // 8 seconds
-    final int ZOMBIE_SPAWN_INTERVAL = 10000;
-    boolean bulletActive = false;
 
+    BasicZombie basicZombie;
+    FastZombie fastZombie;
+
+    Image bg;//background image
+    // Timer bulletSpawnTimer;
+    // Timer zombieSpawnTimer;
+    // final int BULLET_SPAWN_INTERVAL = 8000; // 8 seconds
+    // final int ZOMBIE_SPAWN_INTERVAL = 10000;
+    boolean bulletActive = false;
     boolean warriorAlive = true;
 
     Bullet bullet2, bullet3, bullet4, bullet5, bullet6;
-//    Ladder l1;
+    //    Ladder l1;
     ArrayList<Platform> platforms = new ArrayList<>();
     ArrayList<Bullet> bullets = new ArrayList<>();
-    ArrayList<Zombies> zombies = new ArrayList<>();
-    ArrayList<Ladder> ladders = new ArrayList<>();
+
+    /// POLYMORPHISM BELOW! YAYYY! ZombieBase array with child objects stored
+    ArrayList<ZombieBase> zombies = new ArrayList<>();
+    //  ArrayList<Ladder> ladders = new ArrayList<>();
     Random random=new Random();
 
     GamePanel() {
@@ -52,23 +56,28 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
 //        l1 = new Ladder(350,320,"./ladder.png");
 
+        /// Bullets
         bullets.add(bullet2);
         bullets.add(bullet3);
         bullets.add(bullet4);
         bullets.add(bullet5);
 
-        plat1 = new Platform(20, 700, "./platform.png");
-        plat2 = new Platform(20, 320, "./platform.png");
-        plat3 = new Platform(700, 150, "./platform.png");
-        plat4 = new Platform(700, 500, "./platform.png");
-        plat5 = new Platform(20 + 175, 500, "./platform.png");
+        /// Plats
+//        plat1 = new Platform(20, 700, "./platform.png");
+//        plat2 = new Platform(20, 320, "./platform.png");
+//        plat3 = new Platform(700, 150, "./platform.png");
+//        plat4 = new Platform(700, 500, "./platform.png");
+//        plat5 = new Platform(20 + 175, 500, "./platform.png");
+//        bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg2.png"))).getImage();
+//
+//
+//        platforms.add(plat1);
+//        platforms.add(plat2);
+//        platforms.add(plat3);
+//        platforms.add(plat4);
+//        platforms.add(plat5);
 
-        platforms.add(plat1);
-        platforms.add(plat2);
-        platforms.add(plat3);
-        platforms.add(plat4);
-        platforms.add(plat5);
-
+        ///  Displays
         displayScore.setText("Score: " + score);
         displayScore.setFont(new Font("MV boli", Font.PLAIN, 20));
         displayScore.setForeground(new Color(0xFFFFFF));
@@ -87,38 +96,41 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         displayHealth.setBounds(800, 830, 20, 20);
         this.add(displayHealth);
 
-        bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg2.png"))).getImage();
+        basicZombie = new BasicZombie(700, 235, "/zombies-01.png");
+        zombies.add(basicZombie);
 
-        z1 = new Zombies(700, 235, "/zombies-01.png");
-
-        zombies.add(z1);
+        ///
         addKeyListener(this);
         setFocusable(true);
         this.requestFocusInWindow();
+
+        ///  Timers
         timer = new Timer(10, this);
         timer.start();
-        bulletSpawnTimer = new Timer(BULLET_SPAWN_INTERVAL, this);
-        bulletSpawnTimer.start();
-        zombieSpawnTimer = new Timer(ZOMBIE_SPAWN_INTERVAL, this);
-        zombieSpawnTimer.start();
+        // bulletSpawnTimer = new Timer(BULLET_SPAWN_INTERVAL, this);
+        // bulletSpawnTimer.start();
+        // zombieSpawnTimer = new Timer(ZOMBIE_SPAWN_INTERVAL, this);
+        //zombieSpawnTimer.start();
         repaint();
     }
 
-
-
-    private void spawnRandomBullet() {
-        int x = random.nextInt(1400);  // Random x within screen width
-        int y = random.nextInt(800);   // Random y within screen height
-        bullets.add(new Bullet(x, y, "/bullet.png"));
-        repaint();
-    }
-
-    private void spawnZombie(){
-        int x = random.nextInt(1400);  // Random x within screen width
-        int y = random.nextInt(800);   // Random y within screen height
-        zombies.add(new Zombies(x, y, "/zombies-01.png"));
-        repaint();
-    }
+/// Spawns
+    // private void spawnRandomBullet() {
+    //  int x = random.nextInt(1400);  // Random x within screen width
+    //   int y = random.nextInt(800);   // Random y within screen height
+    //   bullets.add(new Bullet(x, y, "/bullet.png"));
+    //     repaint();
+    //   }
+    /// Separate level
+    // private void spawnZombie(){
+    //   int x = random.nextInt(1400);  // Random x within screen width
+    // int y = random.nextInt(800);   // Random y within screen height
+    // zombies.add(new BasicZombie(x, y, "/zombies-01.png"));
+    // int x2 = random.nextInt(1400);  // Random x within screen width
+    // int y2 = random.nextInt(800);   // Random y within screen height
+    // zombies.add(new FastZombie(x2, y2, "/zombies-08.png"));
+    // repaint();
+    //}
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -127,9 +139,17 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
         if (warriorAlive) {
             m1.draw(g);
-            bullet.draw(g);  // summon bullet
+            if(bulletcount>0) {
+                bullet.draw(g);  // summon bullet
+            }
         }
-
+        else{
+            g.setColor(Color.RED);
+            g.setFont(new Font("MV Boli", Font.BOLD, 80));
+            g.drawString("GAME OVER", 500, 400);
+            timer.stop();
+            gameOver = 2;
+        }
 
         for (Platform p : platforms) {
             p.draw(g);
@@ -139,14 +159,12 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             if (b.active) {
                 b.draw(g);
             }
-
         }
 
-        for (Zombies z : zombies) {
+        for (ZombieBase z : zombies) {
             if (z.zombieAlive) {
                 z.draw(g);
             }
-
         }
 //
 //        l1.draw(g);
@@ -193,21 +211,21 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == bulletSpawnTimer) {
-            spawnRandomBullet();
-            return;
-        }
+        //     if (e.getSource() == bulletSpawnTimer) {
+        //       spawnRandomBullet();
+        //     return;
+        //}
 
-        if (e.getSource() == zombieSpawnTimer) {
-            spawnZombie();
-            return;
-        }
+        //     if (e.getSource() == zombieSpawnTimer) {
+        //       spawnZombie();
+        //     return;
+        //}
 
         Rectangle bulletRect = new Rectangle(bullet.x, bullet.y, 50, 50);
         Rectangle player = new Rectangle(m1.x, m1.y, 100, 136);
 
 
-        for(Zombies z:zombies){
+        for(ZombieBase z:zombies){
             Rectangle z1Rect = new Rectangle(z.x, z.y, 121, 211);
             if (z.zombieAlive) {
                 z.move(z.dx, 0);
@@ -243,7 +261,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                 }
 
                 if (bulletRect.intersects(z1Rect) && z.zombieAlive) {
-                    z1.dx = 0;
+                    basicZombie.dx = 0;
                     z.zombieAlive = false;
                     bulletActive = false;
                     score += 1;
@@ -261,25 +279,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 //            m1.move(0,-168);
 //        }
 
-
-
         if (m1.y > 900) {
             m1.y = 0;
             m1.x = 0;
             bullet.x = 0;   // bullet ka x , y needs to be same bhai
             bullet.y = 0;
-        }
-
-
-        int cy = 0;
-        for (Platform p : platforms) {
-            Rectangle plat = new Rectangle(p.x, p.y,  p.img.getWidth(null), 107);
-            if (!player.intersects(plat)) {
-                cy=15;
-            } else {
-                cy = 0;
-                break;
-            }
         }
 
         Iterator<Bullet> iterator = bullets.iterator();
@@ -295,7 +299,22 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             }
         }
 
+        int cy = 0;
+//        for (Platform p : platforms) {
+//            Rectangle plat = new Rectangle(p.x, p.y,  p.img.getWidth(null), 107);
+//            if (!player.intersects(plat)) {
+//                cy=15;
+//            } else {
+//                cy = 0;
+//                break;
+//            }
+//        }
+
         m1.move(0, cy);
         repaint();
+    }
+
+    public int getGameOver() {
+        return gameOver;
     }
 }
