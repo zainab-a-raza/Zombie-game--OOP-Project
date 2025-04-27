@@ -26,7 +26,8 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
 
     BasicZombie basicZombie;
     FastZombie fastZombie;
-
+    //Rectangle ladderBox;
+    Rectangle player;
     Image bg;//background image
     // Timer bulletSpawnTimer;
     // Timer zombieSpawnTimer;
@@ -36,13 +37,13 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
     boolean warriorAlive = true;
 
     Bullet bullet2, bullet3, bullet4, bullet5, bullet6;
-    //    Ladder l1;
+    Ladder l1,l2,l3,l4;
     ArrayList<Platform> platforms = new ArrayList<>();
     ArrayList<Bullet> bullets = new ArrayList<>();
 
     /// POLYMORPHISM BELOW! YAYYY! ZombieBase array with child objects stored
     ArrayList<ZombieBase> zombies = new ArrayList<>();
-    //  ArrayList<Ladder> ladders = new ArrayList<>();
+    ArrayList<Ladder> ladders = new ArrayList<>();
     Random random=new Random();
 
     GamePanel() {
@@ -54,7 +55,15 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         bullet4 = new Bullet(750, 100, "/bullet.png");
         bullet5 = new Bullet(195, 450, "/bullet.png");
 
-//        l1 = new Ladder(350,320,"./ladder.png");
+        l1 = new Ladder(590,200,"./ladder.png");
+        l2 = new Ladder(801,200,"./ladder.png");
+        l3 = new Ladder(400,450,"./ladder.png");
+        l4 = new Ladder(990,450,"./ladder.png");
+
+        ladders.add(l1);
+        ladders.add(l2);
+        ladders.add(l3);
+        ladders.add(l4);
 
         /// Bullets
         bullets.add(bullet2);
@@ -62,20 +71,6 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         bullets.add(bullet4);
         bullets.add(bullet5);
 
-        /// Plats
-//        plat1 = new Platform(20, 700, "./platform.png");
-//        plat2 = new Platform(20, 320, "./platform.png");
-//        plat3 = new Platform(700, 150, "./platform.png");
-//        plat4 = new Platform(700, 500, "./platform.png");
-//        plat5 = new Platform(20 + 175, 500, "./platform.png");
-//        bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg2.png"))).getImage();
-//
-//
-//        platforms.add(plat1);
-//        platforms.add(plat2);
-//        platforms.add(plat3);
-//        platforms.add(plat4);
-//        platforms.add(plat5);
 
         ///  Displays
         displayScore.setText("Score: " + score);
@@ -96,7 +91,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         displayHealth.setBounds(800, 830, 20, 20);
         this.add(displayHealth);
 
-        basicZombie = new BasicZombie(700, 235, "/zombies-01.png");
+        basicZombie = new BasicZombie(700, 200-61, "/zombies-01.png");
         zombies.add(basicZombie);
 
         ///
@@ -167,7 +162,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             }
         }
 //
-//        l1.draw(g);
+        for(Ladder l: ladders){
+            l.draw(g);
+        }
+
         displayScore.setText("Score: " + score);
         displayBullets.setText("Bullet Count: " + bulletcount);
         displayHealth.setText("Health: " + Math.max(0, m1.health));
@@ -185,9 +183,9 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             cx = 15;
         }
         ///  jump
-        else if (key == KeyEvent.VK_UP) {
-            cy = -50;
-        }
+//        else if (key == KeyEvent.VK_UP) {
+//            cy = -50;
+//        }
         if (key == KeyEvent.VK_SPACE ) {
             if (!bulletActive && bulletcount > 0) {
                 bulletActive = true;
@@ -195,8 +193,23 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                 displayBullets.setText("Bullets: " + bulletcount); // Update display
             }
         }
+
+
+        for(Ladder l:ladders){
+            Rectangle ladderBox = new Rectangle((l.x), l.y, l.width, l.height);
+            if(key == KeyEvent.VK_UP && player.intersects(ladderBox)){
+                m1.move(0,-300);
+            }
+            if(key == KeyEvent.VK_DOWN && player.intersects(ladderBox)){
+                m1.move(0,300);
+            }
+        }
+
+
         m1.move(cx, cy);
         bullet.move(cx, cy);
+
+
 
         repaint();
     }
@@ -222,7 +235,7 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         //}
 
         Rectangle bulletRect = new Rectangle(bullet.x, bullet.y, 50, 50);
-        Rectangle player = new Rectangle(m1.x, m1.y, 100, 136);
+        player = new Rectangle(m1.x, m1.y, 100, 136);
 
 
         for(ZombieBase z:zombies){
@@ -269,15 +282,11 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
             }
         }
 
-//
-//        Rectangle ladderTop = new Rectangle((l1.x+100)/2, l1.y, 100/4, 60);
-//        Rectangle ladderBottom = new Rectangle((l1.x+100)/2, l1.y+108, 100/4, 70);
-//        if(player.intersects(ladderTop)){
-//            m1.move(0,168);
+//////
+//        for(Ladder l:ladders){
+//            ladderBox = new Rectangle((l1.x), l1.y, l1.width, l1.height);
 //        }
-//        if (player.intersects(ladderBottom)){
-//            m1.move(0,-168);
-//        }
+
 
         if (m1.y > 900) {
             m1.y = 0;

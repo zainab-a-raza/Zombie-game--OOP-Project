@@ -13,7 +13,7 @@ public class Level_1 extends GamePanel {
         plat2 = new Platform(frameWidth - platformWidth, 200, "./longPlatform.png");      // Top right
 
         // Middle platform
-        plat3 = new Platform((frameWidth / 2) - (platformWidth / 2), 500, "./longPlatform.png");
+        plat3 = new Platform((frameWidth / 2) - (platformWidth / 2), 450, "./longPlatform.png");
 
         // Bottom platforms
         plat4 = new Platform(0, 700, "./longPlatform.png");                               // Bottom left
