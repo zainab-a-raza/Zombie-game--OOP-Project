@@ -5,8 +5,10 @@ import java.util.Objects;
 
 public class Level_1 extends GamePanel {
     Level_1() {
+        timeLimit = 30;
         int frameWidth = 1500;
         int platformWidth = 699;
+        levelStartTime = System.currentTimeMillis();
 
         // Top platforms
         plat1 = new Platform(0, 200, "./longPlatform.png");                               // Top left
@@ -29,6 +31,22 @@ public class Level_1 extends GamePanel {
         platforms.add(plat4);
         platforms.add(plat5);
 
+        healthBoosterTimer = new Timer(25000, e -> spawnHealthBooster());
+        healthBoosterTimer.start();
+
+    }
+    @Override
+    public boolean checkLevelCompleted() {
+        if (currentLevel == 0 && score>=1) {
+            if (score >= 1) {
+                zombies.clear();
+                bullets.clear();
+                healthBoosterTimer.stop();
+                timer.stop();
+                return true;
+            }
+        }
+        return false;
     }
     @Override
     public void actionPerformed(ActionEvent e){
@@ -36,7 +54,7 @@ public class Level_1 extends GamePanel {
         Rectangle player = new Rectangle(m1.x, m1.y, 100, 136);
         int cy = 0;
         for (Platform p : platforms) {
-            Rectangle plat = new Rectangle(p.x, p.y, p.img.getWidth(null), 61);  // Use 61 (your platform height)
+            Rectangle plat = new Rectangle(p.x, p.y, p.img.getWidth(null), 61); 
             if (!player.intersects(plat)) {
                 cy = 15; // fall down
             } else {
@@ -44,7 +62,6 @@ public class Level_1 extends GamePanel {
                 break;
             }
         }
-
         m1.move(0, cy);
         repaint();
 
