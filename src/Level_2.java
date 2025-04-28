@@ -1,6 +1,5 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Objects;
 import javax.swing.*;
 
@@ -12,8 +11,11 @@ public class Level_2 extends GamePanel {
     final int ZOMBIE_SPAWN_INTERVAL = 10000;
 
     Level_2() {
+        timeLimit = 90;
         int frameWidth = 1500;
         int platformWidth = 699;
+        levelStartTime = System.currentTimeMillis();
+
 
         // Top platforms
         plat1 = new Platform(0, 200, "./longPlatform.png");                               // Top left
@@ -36,46 +38,61 @@ public class Level_2 extends GamePanel {
         platforms.add(plat4);
         platforms.add(plat5);
 
-         bulletSpawnTimer = new Timer(BULLET_SPAWN_INTERVAL, this);
-         bulletSpawnTimer.start();
-         zombieSpawnTimer = new Timer(ZOMBIE_SPAWN_INTERVAL, this);
+        healthBoosterTimer = new Timer(25000, e -> spawnHealthBooster());
+        healthBoosterTimer.start();
+        bulletSpawnTimer = new Timer(BULLET_SPAWN_INTERVAL, this);
+        bulletSpawnTimer.start();
+        zombieSpawnTimer = new Timer(ZOMBIE_SPAWN_INTERVAL, this);
         zombieSpawnTimer.start();
         repaint();
     }
-/// Spawns
-     private void spawnRandomBullet() {
-      int x = random.nextInt(1400);  // Random x within screen width
-       int y = random.nextInt(800);   // Random y within screen height
-       bullets.add(new Bullet(x, y, "/bullet.png"));
-         repaint();
-       }
-     private void spawnZombie(){
-       int x = random.nextInt(1400);  // Random x within screen width
-     int y = random.nextInt(800);   // Random y within screen height
-     zombies.add(new BasicZombie(x, y, "/zombies-01.png"));
-     int x2 = random.nextInt(1400);  // Random x within screen width
-     int y2 = random.nextInt(800);   // Random y within screen height
-     zombies.add(new FastZombie(x2, y2, "/zombies-08.png"));
-     repaint();
+    /// Spawns
+    private void spawnRandomBullet() {
+        int x = random.nextInt(1400);  
+        int y = random.nextInt(800);   
+        bullets.add(new Bullet(x, y, "/bullet.png"));
+        repaint();
+    }
+    private void spawnZombie(){
+        int x = random.nextInt(1400); 
+        int y = random.nextInt(800);  
+        zombies.add(new BasicZombie(x, y, "/zombies-01.png"));
+        int x2 = random.nextInt(1400);
+        int y2 = random.nextInt(800); 
+        zombies.add(new FastZombie(x2, y2, "/zombies-08.png"));
+        repaint();
+    }
+
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (healthBoosterActive) {
+            healthBooster.draw(g);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
         super.actionPerformed(e);
-             if (e.getSource() == bulletSpawnTimer) {
-               spawnRandomBullet();
-             return;
+        if (e.getSource() == bulletSpawnTimer) {
+            spawnRandomBullet();
+            return;
         }
 
-             if (e.getSource() == zombieSpawnTimer) {
-               spawnZombie();
-             return;
+        if (e.getSource() == zombieSpawnTimer) {
+            spawnZombie();
+            return;
+        }
+
+        if (!warriorAlive) {
+            // Immediately trigger game over if player dies
+            Frame.showGameOver();
+            return;
         }
 
         Rectangle player = new Rectangle(m1.x, m1.y, 100, 136);
         int cy = 0;
         for (Platform p : platforms) {
-            Rectangle plat = new Rectangle(p.x, p.y, p.img.getWidth(null), 61);  // Use 61 (your platform height)
+            Rectangle plat = new Rectangle(p.x, p.y, p.img.getWidth(null), 61); 
             if (!player.intersects(plat)) {
                 cy = 15; // fall down
             } else {
