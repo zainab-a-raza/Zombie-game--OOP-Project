@@ -9,13 +9,66 @@ import java.util.Iterator;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements KeyListener, ActionListener {
-   protected int score = 0;
-   protected int bulletcount = 5;
-   protected int gameOver = 1;
+    protected int score = 0;
+    protected int bulletcount = 5;
+    protected int gameOver = 1;
+    protected int timeLimit; // in seconds
+    protected long levelStartTime;
+    protected Timer healthBoosterTimer;
+    protected boolean healthBoosterActive = false;
+    protected GameObject healthBooster;
+
+    public int getTimeLimit() {
+        return timeLimit;
+    }
+
+    protected int currentLevel;
+
+    public void setCurrentLevel(int level) {
+        this.currentLevel = level;
+    }
+
+    public boolean checkLevelCompleted() {
+        if (currentLevel == 0) { // Level 1 - score based
+            return score >= 1;
+        } else if (currentLevel == 1) { // Level 2 - survival
+            return warriorAlive;
+        }
+        // Add conditions for other levels
+        return false;
+    }
+
+    void spawnHealthBooster() {
+        if (!healthBoosterActive) {
+            int x = random.nextInt(1400);
+            int y = random.nextInt(800);
+            healthBooster = new GameObject(x, y, "/heart.png");
+            healthBoosterActive = true;
+
+            // Change duration to 5000ms (5 seconds)
+            Timer hideTimer = new Timer(5000, e -> {
+                healthBoosterActive = false;
+                repaint();
+            });
+            hideTimer.setRepeats(false);
+            hideTimer.start();
+            repaint();
+        }
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public boolean isWarriorAlive(){
+        return warriorAlive;
+    }
 
     JLabel displayScore = new JLabel();
     JLabel displayBullets = new JLabel();
     JLabel displayHealth=new JLabel();
+    private JLabel timeLabel = new JLabel();
+
 
     boolean intersectplatform = false;
     Timer timer;
@@ -71,6 +124,10 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
         bullets.add(bullet4);
         bullets.add(bullet5);
 
+        timeLabel.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        timeLabel.setForeground(Color.WHITE);
+        timeLabel.setBounds(50, 800, 200, 20);
+        this.add(timeLabel);
 
         ///  Displays
         displayScore.setText("Score: " + score);
@@ -305,6 +362,21 @@ public class GamePanel extends JPanel implements KeyListener, ActionListener {
                     bulletcount++;
                     iterator.remove();
                 }
+            }
+        }
+
+        long elapsed = (System.currentTimeMillis() - levelStartTime) / 1000;
+        long remaining = timeLimit - elapsed;
+        timeLabel.setText("Time: " + remaining + "s");
+
+        if (healthBoosterActive) {
+            Rectangle boosterRect = new Rectangle(healthBooster.x, healthBooster.y,
+                    healthBooster.img.getWidth(null),
+                    healthBooster.img.getHeight(null));
+            if (player.intersects(boosterRect)) {
+                m1.health = Math.min(100, m1.health + 10);
+                healthBoosterActive = false;
+                displayHealth.setText("Health: " + m1.health);
             }
         }
 
