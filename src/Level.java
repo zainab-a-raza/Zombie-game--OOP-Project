@@ -1,0 +1,210 @@
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+public class Level extends JPanel{
+
+    ArrayList<Platform> platforms = new ArrayList<>();
+    ArrayList<Bullet> bullets = new ArrayList<>();
+
+    /// POLYMORPHISM BELOW! YAYYY! ZombieBase array with child objects stored
+    ArrayList<ZombieBase> zombies = new ArrayList<>();
+    ArrayList<Ladder> ladders = new ArrayList<>();
+    boolean intersectplatform = false;
+    Warrior m1= new Warrior(0, 0, "/player.png");
+    Bullet bullet = new Bullet(m1.x, m1.y, "/bullet.png");
+    boolean bulletActive = false;
+    boolean warriorAlive = true;
+    protected int score = 0;
+    protected int bulletcount = 5;
+    protected int gameOver = 1;
+    Image bg;//background image
+
+    Rectangle player;
+
+    JLabel displayScore = new JLabel();
+    JLabel displayBullets = new JLabel();
+    JLabel displayHealth=new JLabel();
+
+    Level(){
+        displayScore.setText("Score: " + score);
+        displayScore.setFont(new Font("MV boli", Font.PLAIN, 20));
+        displayScore.setForeground(new Color(0xFFFFFF));
+        displayScore.setBounds(800, 800, 20, 20);
+        this.add(displayScore);
+
+        displayBullets.setText("Bullet Count: " + bulletcount);
+        displayBullets.setFont(new Font("MV boli", Font.PLAIN, 20));
+        displayBullets.setForeground(new Color(0xFFFFFF));
+        displayBullets.setBounds(800, 800, 20, 20);
+        this.add(displayBullets);
+
+        displayHealth.setText("Health: "+m1.health);
+        displayHealth.setFont(new Font("MV boli", Font.PLAIN, 20));
+        displayHealth.setForeground(new Color(0xFFFFFF));
+        displayHealth.setBounds(800, 830, 20, 20);
+        this.add(displayHealth);
+    }
+
+
+
+    public void draw(Graphics g){
+        g.drawImage(bg, 0, 0, 1500, 900, this);
+
+        if (warriorAlive) {
+            m1.draw(g);
+            if(bulletcount>0) {
+                bullet.draw(g);  // summon bullet
+            }
+        }
+        else{
+            g.setColor(Color.RED);
+            g.setFont(new Font("MV Boli", Font.BOLD, 80));
+            g.drawString("GAME OVER", 500, 400);
+//            timer.stop();
+            gameOver = 2;
+        }
+
+        for (Platform p : platforms) {
+            p.draw(g);
+        }
+
+        for (Bullet b : bullets) {
+            if (b.active) {
+                b.draw(g);
+            }
+        }
+
+        for (ZombieBase z : zombies) {
+            if (z.zombieAlive) {
+                z.draw(g);
+            }
+        }
+//
+        for(Ladder l: ladders){
+            l.draw(g);
+        }
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("MV Boli", Font.PLAIN, 20));
+        g.drawString("Score: " + score, 1200, 50); // Adjust x,y as you want
+        g.drawString("Bullet Count: " + bulletcount, 1200, 80);
+        g.drawString("Health: " + Math.max(0, m1.health), 1200, 110);
+    };
+
+
+    public void update() {
+        player = new Rectangle(m1.x, m1.y, 100, 136);
+        int cy = 0;
+        for (Platform p : platforms) {
+            Rectangle plat = new Rectangle(p.x, p.y, p.img.getWidth(null), 61);  // Use 61 (your platform height)
+            if (!player.intersects(plat)) {
+                cy = 15; // fall down
+            } else {
+                cy = 0;  // standing on platform
+                break;
+            }
+        }
+        Rectangle bulletRect = new Rectangle(bullet.x, bullet.y, 50, 50);
+        player = new Rectangle(m1.x, m1.y, 100, 136);
+
+        for(ZombieBase z:zombies){
+            Rectangle z1Rect = new Rectangle(z.x, z.y, 121, 211);
+            if (z.zombieAlive) {
+                z.move(z.dx, 0);
+
+                if (player.intersects(z1Rect)) {
+                    if (!z.justHitPlayer) {
+                        // Only damage player if this is a new collision
+                        m1.health -= 20;
+                        z.justHitPlayer = true;
+                        z.dx *= -1;  // Make zombie turn around
+
+                        if (m1.health <= 0) {
+                            warriorAlive = false;
+                            m1.health = 0;
+                        }
+                    }
+                } else {
+                    // Reset flag when not colliding
+                    z.justHitPlayer = false;
+                }
+
+                if (z.x >= 1250 || z.x < 0) {
+                    z.dx *= -1;
+                }
+            }
+            if (!bulletActive) {
+                bullet.x = m1.x + 50;
+                bullet.y = m1.y + 68;
+            } else {
+                bullet.move(10, 0);
+                if (bullet.x > 1500) {
+                    bulletActive = false;
+                }
+
+                if (bulletRect.intersects(z1Rect) && z.zombieAlive) {
+                    z.dx = 0;
+                    z.zombieAlive = false;
+                    bulletActive = false;
+                    score += 1;
+                }
+            }
+        }
+
+
+        if (m1.y > 900) {
+            m1.y = 0;
+            m1.x = 0;
+            bullet.x = 0;   // bullet ka x , y needs to be same bhai
+            bullet.y = 0;
+        }
+
+        Iterator<Bullet> iterator = bullets.iterator();
+        while (iterator.hasNext()) {
+            Bullet b = iterator.next();
+            if (b.active) {
+                Rectangle bulletBorder = new Rectangle(b.x, b.y, 25, 25);
+                if (player.intersects(bulletBorder)) {
+                    b.active = false;
+                    bulletcount++;
+                    iterator.remove();
+                }
+            }
+        }
+
+        m1.move(0, cy);
+
+    }
+
+    public boolean isLevelCompleted() {
+        for (ZombieBase z : zombies) {
+            if (z.zombieAlive) {
+                return false;
+            }
+        }
+        return true;
+//        for (ZombieBase z : zombies) {
+//            if (z.zombieAlive) {
+//                return false;
+//            }
+//        }
+//        return true;
+    }
+
+
+    public boolean isGameOver() {
+        if(m1.health <= 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    public void reset() {
+
+    }
+
+}
