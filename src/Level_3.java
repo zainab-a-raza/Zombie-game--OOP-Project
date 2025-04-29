@@ -1,22 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.util.Iterator;
 import java.util.Objects;
 
-public class Level_1 extends Level{
-
+public class Level_3 extends Level{
     Platform plat1, plat2, plat3, plat4, plat5;
     Bullet bullet2, bullet3, bullet4, bullet5, bullet6;
-    Ladder l1,l2,l3,l4;
+    Ladder l1, l2, l3, l4;
 
-    BasicZombie basicZombie;
-    BasicZombie basicZombie2;
+    JumpingZombie jumpingZombie;
+    FastZombie fastZombie;
 
-    Level_1() {
+
+
+    Level_3() {
         int frameWidth = 1500;
         int platformWidth = 699;
 
+        bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg_lvl2.png"))).getImage();
 
         // Top platforms
         plat1 = new Platform(0, 200, "./longPlatform.png");                               // Top left
@@ -28,14 +28,13 @@ public class Level_1 extends Level{
         plat5 = new Platform(frameWidth - platformWidth, 700, "./longPlatform.png");      // Bottom right
 
         // Background
-        bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg2.png"))).getImage();
 
-        // Add platforms
         platforms.add(plat1);
         platforms.add(plat2);
         platforms.add(plat3);
         platforms.add(plat4);
         platforms.add(plat5);
+
 
         l1 = new Ladder(590,200,"./ladder.png");
         l2 = new Ladder(801,200,"./ladder.png");
@@ -48,9 +47,9 @@ public class Level_1 extends Level{
         ladders.add(l4);
 
         bullet2 = new Bullet(50, 600, "/bullet.png");
-        bullet3 = new Bullet(700, 600, "/bullet.png");
-        bullet4 = new Bullet(550, 100, "/bullet.png");
-        bullet5 = new Bullet(750, 400, "/bullet.png");
+        bullet3 = new Bullet(50, 300, "/bullet.png");
+        bullet4 = new Bullet(750, 100, "/bullet.png");
+        bullet5 = new Bullet(195, 450, "/bullet.png");
 
         /// Bullets
         bullets.add(bullet2);
@@ -58,18 +57,12 @@ public class Level_1 extends Level{
         bullets.add(bullet4);
         bullets.add(bullet5);
 
-//        m1 = new Warrior(0, 0, "/player.png");
-        //bullet = new Bullet(m1.x, m1.y, "/bullet.png");
+        jumpingZombie = new JumpingZombie(300, 800, "/zombies-01.png");
+        fastZombie = new FastZombie((1500 / 2) - (699/ 3), 400,"/zombies-08.png");
 
-        basicZombie = new BasicZombie(700, 200-61, "/zombies-01.png");
-        basicZombie2 = new BasicZombie((1500 / 2) - (699/ 2), 380,"/zombies-01.png");
-
-
-        zombies.add(basicZombie);
-        zombies.add(basicZombie2);
-
+        zombies.add(jumpingZombie);
+        zombies.add(fastZombie);
 
     }
-
 
 }
