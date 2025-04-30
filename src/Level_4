@@ -1,0 +1,158 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Random;
+public class Level_4 extends Level implements ActionListener {
+
+    Platform plat1, plat2, plat3, plat4, plat5;
+    Bullet bullet2, bullet3, bullet4, bullet5;
+    Ladder l1, l2, l3, l4,l5,l6,l7,l8;
+    ArrayList<HealthBooster> healthBoosters=new ArrayList<>();
+    Timer bulletSpawnTimer;
+    Timer zombieSpawnTimer;
+    Timer fastZombieSpawnTimer;
+    Timer grenadeSpawnTimer;
+    Timer healthBoosterSpawnTimer;
+    Random random=new Random();
+
+    BossZombie bossZombie;
+
+
+
+    Level_4() {
+        plat1 = new Platform(0, 200, "./longPlatform.png");                               // Top left
+        plat2 = new Platform(frameWidth - platformWidth, 200, "./longPlatform.png");      // Top right
+        // Middle platform
+        plat3 = new Platform((frameWidth / 2) - (platformWidth / 2), 450, "./longPlatform.png");
+        // Bottom platforms
+        plat4 = new Platform(0, 700, "./longPlatform.png");                               // Bottom left
+        plat5 = new Platform(frameWidth - platformWidth, 700, "./longPlatform.png");      // Bottom right
+
+        // Background
+
+        platforms.add(plat1);
+        platforms.add(plat2);
+        platforms.add(plat3);
+        platforms.add(plat4);
+        platforms.add(plat5);
+
+
+        l1 = new Ladder(590,200,"./ladder.png");
+        l2 = new Ladder(801,200,"./ladder.png");
+        l3 = new Ladder(400,450,"./ladder.png");
+        l4 = new Ladder(990,450,"./ladder.png");
+        l5 = new Ladder(0,200,"./ladder.png");
+        l6 = new Ladder(1450,200,"./ladder.png");
+        l7 = new Ladder(0,455,"./ladder.png");
+        l8 = new Ladder(1450,455,"./ladder.png");
+
+        ladders.add(l1);
+        ladders.add(l2);
+        ladders.add(l3);
+        ladders.add(l4);
+        ladders.add(l5);
+        ladders.add(l6);
+        ladders.add(l7);
+        ladders.add(l8);
+
+        bullet2 = new Bullet(50, 600, "/bullet.png");
+        bullet3 = new Bullet(700, 600, "/bullet.png");
+        bullet4 = new Bullet(550, 100, "/bullet.png");
+        bullet5 = new Bullet(750, 400, "/bullet.png");
+
+
+        /// Bullets
+        bullets.add(bullet2);
+        bullets.add(bullet3);
+        bullets.add(bullet4);
+        bullets.add(bullet5);
+
+        bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg_4.jpeg"))).getImage();
+
+        bossZombie = new BossZombie(1050, 550, "/Boss_zombie.png");
+
+        zombies.add(bossZombie);
+        bossZombie.attack();
+
+        bulletSpawnTimer = new Timer(10000, this);
+        bulletSpawnTimer.start();
+
+        zombieSpawnTimer=new Timer(25000,this);
+        zombieSpawnTimer.start();
+
+        fastZombieSpawnTimer = new Timer(40000,this);
+        fastZombieSpawnTimer.start();
+
+        grenadeSpawnTimer =new Timer(15000,this);
+        grenadeSpawnTimer.start();
+
+        healthBoosterSpawnTimer = new Timer(10000,this);
+        healthBoosterSpawnTimer.start();
+        repaint();
+    }
+    private void spawnRandomBullet() {
+      int x = random.nextInt(1400);  // Random x within screen width
+       int y = random.nextInt(800);   // Random y within screen height
+       bullets.add(new Bullet(x, y, "/bullet.png"));
+         repaint();
+       }
+
+
+    private void spawnRandomHealthBooster() {
+        int x = random.nextInt(1400);  // Random x within screen width
+        int y = random.nextInt(800);   // Random y within screen height
+        healthBoosters.add(new HealthBooster(x, y, "/heart.png"));
+        repaint();
+    }
+
+     private void spawnZombie(){
+       int x = random.nextInt(1400);  // Random x within screen width
+     int y = random.nextInt(800);   // Random y within screen height
+     zombies.add(new BasicZombie(x, y, "/zombies-01.png"));
+     repaint();
+    }
+
+    private void spawnFastZombie(){
+        int x2 = random.nextInt(1400);  // Random x within screen width
+        int y2 = random.nextInt(800);   // Random y within screen height
+        zombies.add(new FastZombie(x2, y2, "/zombies-08.png"));
+    }
+    private void spawnRandomGrenade() {
+        int x = random.nextInt(1400);  // Random x within screen width
+        int y = random.nextInt(800);   // Random y within screen height
+        grenades.add(new Grenade(x, y, "/grenade.png"));
+        repaint();
+    }
+
+
+
+    @Override
+    public void actionPerformed(ActionEvent e){
+        super.actionPerformed(e);
+        if (e.getSource() == bulletSpawnTimer) {
+               spawnRandomBullet();
+             return;
+        }
+
+        if (e.getSource() == zombieSpawnTimer) {
+               spawnZombie();
+             return;
+        }
+
+        if (e.getSource() == fastZombieSpawnTimer) {
+            spawnFastZombie();
+             return;
+        }
+        if (e.getSource() == grenadeSpawnTimer) {
+            spawnRandomGrenade();
+            return;
+        }
+        if (e.getSource() == healthBoosterSpawnTimer) {
+            spawnRandomHealthBooster();
+            return;
+        }
+    }
+}
