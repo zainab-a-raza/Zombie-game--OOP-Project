@@ -1,0 +1,36 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class HealthBooster extends GameObject {
+    private boolean isActive = false;
+    private long spawnTime;
+
+    public HealthBooster(int x, int y, String path) {
+        super(x, y, path);
+        this.isActive=true;
+    }
+
+    public void spawn() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - spawnTime > 15000) {  // Spawn every 15 seconds
+            isActive = true;
+            spawnTime = currentTime;
+        }
+    }
+
+    public void checkPlayerCollision(Warrior player) {
+        if (isActive && player.getBounds().intersects(getBounds())) {
+            player.increaseHealth(20);  // Increase health by 10
+            isActive = false;  // Deactivate booster
+        }
+    }
+
+    public boolean getisActive() {
+        return isActive;
+    }
+    //    public void draw(Graphics g) {
+//        if (isActive) {
+//            g.drawImage(img, x, y, null);
+//        }
+//    }
+}
