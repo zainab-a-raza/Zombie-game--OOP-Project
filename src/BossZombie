@@ -1,0 +1,46 @@
+public class BossZombie extends ZombieBase{
+    private int health=200;
+    ArrayList<ZombieBullet> zombieBullets =new ArrayList<>();
+
+    public BossZombie(int x, int y, String path) {
+        super(x, y, path);
+        zombieBullets.add(new ZombieBullet(x,y,"/zombie_bullet_right.png"));
+        zombieBullets.add(new ZombieBullet(x,y,"/zombie_bullet_left.png"));
+        zombieBullets.add(new ZombieBullet(x,y,"/zombie_bullet_up.png"));
+        zombieBullets.add(new ZombieBullet(x,y,"/zombie_bullet_North_East.png"));
+        zombieBullets.add(new ZombieBullet(x,y,"/zombie_bullet_North_West.png"));
+
+    }
+
+    @Override
+    void move() {
+        this.x += 2*dx;
+    }
+
+    @Override
+    void attack() {
+        zombieBullets.getFirst().move(5,0);
+        zombieBullets.get(1).move(5,0);
+        zombieBullets.get(2).move(5,5);
+        zombieBullets.get(3).move(5,5);
+        zombieBullets.getLast().move(0,5);
+    }
+
+    @Override
+    boolean isAlive() {
+        return zombieAlive;
+    }
+    public void gotDamage(int demage){
+        this.health-=demage;
+    }
+
+    @Override
+    public int getX() {
+        return super.getX();
+    }
+
+    @Override
+    public int getY() {
+        return super.getY();
+    }
+}
