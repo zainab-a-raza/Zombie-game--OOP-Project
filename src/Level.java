@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 public class Level extends JPanel{
 
+    Grenade grenade1 = new Grenade(5,50, "/grenade.png" );;
+
     ArrayList<Platform> platforms = new ArrayList<>();
     ArrayList<Bullet> bullets = new ArrayList<>();
 
@@ -52,6 +54,13 @@ public class Level extends JPanel{
     public void draw(Graphics g){
         g.drawImage(bg, 0, 0, 1500, 900, this);
 
+        if(grenade1.display){
+            grenade1.draw(g);
+        }
+        if(grenade1.isTriggerExplosion()){
+            grenade1.drawExplosion(g);
+        }
+
         if (warriorAlive) {
             m1.draw(g);
             if(bulletcount>0) {
@@ -98,7 +107,7 @@ public class Level extends JPanel{
         player = new Rectangle(m1.x, m1.y, 100, 136);
         int cy = 0;
         for (Platform p : platforms) {
-            Rectangle plat = new Rectangle(p.x, p.y, p.img.getWidth(null), 61);  // Use 61 (your platform height)
+            Rectangle plat = new Rectangle(p.x, p.y+10, p.img.getWidth(null), 61);  // Use 61 (your platform height)
             if (!player.intersects(plat)) {
                 cy = 15; // fall down
             } else {
@@ -106,18 +115,57 @@ public class Level extends JPanel{
                 break;
             }
         }
+        /// ree
+        Rectangle grenadeRect = new Rectangle(grenade1.x, grenade1.y, 150, 150);
+        if (grenade1.isTriggerExplosion()) {
+            grenade1.updateExplosion();
+        }
+
+        /// ree
+
         Rectangle bulletRect = new Rectangle(bullet.x, bullet.y, 50, 50);
         player = new Rectangle(m1.x, m1.y, 100, 136);
 
+        /// ree
+
+        if (grenadeRect.intersects(player)) {
+            grenade1.setGrenadeInHand(true);  // Pick up
+        }
+
+        if (grenade1.isActive()) {
+            grenade1.move(10);
+            if (grenade1.x > 1500) {
+                grenade1.setActive(false);
+            }
+        }
+        else if (grenade1.isGrenadeInHand()) {
+            // if it's still in hand, stick to player
+            grenade1.x = m1.x + 30;
+            grenade1.y = m1.y + 40;
+        }
+        /// ree
+        if(!grenade1.isGrenadeInHand()){
+            if (!bulletActive) {
+                bullet.x = m1.x + 50;
+                bullet.y = m1.y + 68;
+            } else {
+                bullet.move(10);
+                if (bullet.x > 1500) {
+                    bulletActive = false;
+                }
+            }
+        }
+
+        ///
         for(ZombieBase z:zombies){
             Rectangle z1Rect = new Rectangle(z.x, z.y, 121, 211);
             if (z.zombieAlive) {
-                z.move(z.dx, 0);
+                z.move();
 
                 if (player.intersects(z1Rect)) {
                     if (!z.justHitPlayer) {
                         // Only damage player if this is a new collision
-                        m1.health -= 20;
+                        m1.health -= 10;
                         z.justHitPlayer = true;
                         z.dx *= -1;  // Make zombie turn around
 
@@ -134,48 +182,50 @@ public class Level extends JPanel{
                 if (z.x >= 1250 || z.x < 0) {
                     z.dx *= -1;
                 }
-            }
-            if (!bulletActive) {
-                bullet.x = m1.x + 50;
-                bullet.y = m1.y + 68;
-            } else {
-                bullet.move(10, 0);
-                if (bullet.x > 1500) {
-                    bulletActive = false;
-                }
+                // -- Grenade hits zombie --
+                if (grenadeRect.intersects(z1Rect) && grenade1.isActive()) {
+                    grenade1.setTriggerExplosion(true);
 
-                if (bulletRect.intersects(z1Rect) && z.zombieAlive) {
-                    z.dx = 0;
                     z.zombieAlive = false;
+                    z.dx = 0;
+                    grenade1.display =false; // check if better way
+                    grenade1.setActive(false);
+                    grenade1.setGrenadeInHand(false);
+                    score += 1;
+                }
+                ///  reee
+                // -- Bullet hits zombie --
+                if (bulletActive && bulletRect.intersects(z1Rect)) {
+                    z.zombieAlive = false;
+                    z.dx = 0;
                     bulletActive = false;
                     score += 1;
                 }
             }
-        }
+            ///
 
+            if (m1.y > 900) {
+                m1.y = 0;
+                m1.x = 0;
+                bullet.x = 0;   // bullet ka x , y needs to be same bhai
+                bullet.y = 0;
+            }
 
-        if (m1.y > 900) {
-            m1.y = 0;
-            m1.x = 0;
-            bullet.x = 0;   // bullet ka x , y needs to be same bhai
-            bullet.y = 0;
-        }
-
-        Iterator<Bullet> iterator = bullets.iterator();
-        while (iterator.hasNext()) {
-            Bullet b = iterator.next();
-            if (b.active) {
-                Rectangle bulletBorder = new Rectangle(b.x, b.y, 25, 25);
-                if (player.intersects(bulletBorder)) {
-                    b.active = false;
-                    bulletcount++;
-                    iterator.remove();
+            Iterator<Bullet> iterator = bullets.iterator();
+            while (iterator.hasNext()) {
+                Bullet b = iterator.next();
+                if (b.active) {
+                    Rectangle bulletBorder = new Rectangle(b.x, b.y, 25, 25);
+                    if (player.intersects(bulletBorder)) {
+                        b.active = false;
+                        bulletcount++;
+                        iterator.remove();
+                    }
                 }
             }
+
+            m1.move(0, cy);
         }
-
-        m1.move(0, cy);
-
     }
 
     public boolean isLevelCompleted() {

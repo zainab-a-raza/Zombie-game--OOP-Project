@@ -1,10 +1,13 @@
+import javax.swing.*;
 import java.awt.*;
 
 public class LevelManager {
     boolean hasWon = false;
     boolean gamelost= false;
     Level currentLevel;
-    private int levelNumber=1;
+    int levelNumber=1;
+
+
     LevelManager() {
         loadLevel(levelNumber);
     }
@@ -13,12 +16,13 @@ public class LevelManager {
         if (levelNumber == 1) {
             currentLevel = new Level_1();
         }
-        else if(levelNumber ==2) {
-            currentLevel = new Level_2();
-        } else{
+        else if(levelNumber ==2) {currentLevel = new Level_2();}
+        else if(levelNumber ==3){
+            currentLevel= new Level_3();
+        }
+        else if(levelNumber >3){
+            currentLevel= null;
             hasWon= true;
-            System.out.println("Has won");
-
         }
     }
 
@@ -31,10 +35,6 @@ public class LevelManager {
             g.setColor(Color.GREEN);
             g.setFont(new Font("Arial", Font.BOLD, 100));
             g.drawString("YOU WON!", 400, 450);
-        }else if(gamelost){
-            g.setColor(Color.GREEN);
-            g.setFont(new Font("Arial", Font.BOLD, 100));
-            g.drawString("YOU LOST!", 400, 450);
         }
 
 //
