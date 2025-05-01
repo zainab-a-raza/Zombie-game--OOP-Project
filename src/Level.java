@@ -514,10 +514,10 @@ public class Level extends JPanel{
             Iterator<Grenade> graenadeIterator = grenades.iterator();
             while (graenadeIterator.hasNext()) {
                 Grenade g=graenadeIterator.next();
-                if (g.active) {
+                if (g.isActive()) {
                     Rectangle grenadeBorder = new Rectangle(g.x, g.y, 25, 25);
                     if (player.intersects(grenadeBorder)) {
-                        g.active = false;
+                        g.setActive(false);
                         grenadecount++;
                         graenadeIterator.remove();
                     }
