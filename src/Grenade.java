@@ -113,7 +113,7 @@ public class Grenade extends GameObject implements Weapons{
     }
 
     @Override
-    public void move(int x,int y) {
+    public void move(int x) {
         this.x += x;
     }
 

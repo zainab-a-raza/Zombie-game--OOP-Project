@@ -273,7 +273,7 @@ public class Level extends JPanel{
     ArrayList<Platform> platforms = new ArrayList<>();
     ArrayList<Bullet> bullets = new ArrayList<>();
     ArrayList<Grenade> grenades=new ArrayList<>();
-    ArrayList<HealthBooster> healthBoosters=new ArrayList<>();
+    //ArrayList<HealthBooster> healthBoosters=new ArrayList<>();
 
     /// POLYMORPHISM BELOW! YAYYY! ZombieBase array with child objects stored
     ArrayList<ZombieBase> zombies = new ArrayList<>();
@@ -336,11 +336,11 @@ public class Level extends JPanel{
                 }
             }
         }
-        for (HealthBooster healthBooster:healthBoosters){
-            if (healthBooster.getisActive()){
-                healthBooster.draw(g);
-            }
-        }
+//        for (HealthBooster healthBooster:healthBoosters){
+//            if (healthBooster.getisActive()){
+//                healthBooster.draw(g);
+//            }
+//        }
         if (warriorAlive) {
             m1.draw(g);
             if(bulletcount>0) {
@@ -391,16 +391,17 @@ public class Level extends JPanel{
 
     public void update() {
         player = new Rectangle(m1.x, m1.y, 100, 136);
-        int cy = 0;
+
+        int cy = 15;
+
         for (Platform p : platforms) {
-            Rectangle plat = new Rectangle(p.x, p.y+10, p.img.getWidth(null), 61);  // Use 61 (your platform height)
-            if (!player.intersects(plat)) {
-                cy = 15; // fall down
-            } else {
-                cy = 0;  // standing on platform
+            Rectangle plat = new Rectangle(p.x, p.y + 10, p.img.getWidth(null), 61);
+            if (player.intersects(plat)) {
+                cy = 0;
                 break;
             }
         }
+
         /// ree
         Rectangle grenadeRect = new Rectangle(grenade.x, grenade.y, 40, 40);
         if (grenade.isTriggerExplosion()) {
@@ -443,7 +444,7 @@ public class Level extends JPanel{
         }
 
         ///
-        for(ZombieBase z:zombies){
+        for(ZombieBase z:zombies) {
             Rectangle z1Rect = new Rectangle(z.x, z.y, 121, 211);
             if (z.zombieAlive) {
                 z.move();
@@ -474,7 +475,7 @@ public class Level extends JPanel{
 
                     z.zombieAlive = false;
                     z.dx = 0;
-                    grenade.display =false; // check if better way
+                    grenade.display = false; // check if better way
                     grenade.setActive(false);
                     grenade.setGrenadeInHand(false);
                     score += 1;
@@ -488,6 +489,7 @@ public class Level extends JPanel{
                     score += 1;
                 }
             }
+        }
             ///
 
             if (m1.y > 900) {
@@ -521,10 +523,16 @@ public class Level extends JPanel{
                     }
                 }
             }
+            System.out.println("Cy "+ cy+" m1.y: " + m1.y);
 
-            m1.move(0, cy);
+            if(GamePanel.onLadder) {
+                cy = 0; // cancel gravity
+                m1.move(0, cy);
+            }
+            else{   // include gravity
+                m1.move(0, cy);
+            }
         }
-    }
 
     public boolean isLevelCompleted() {
         for (ZombieBase z : zombies) {

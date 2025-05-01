@@ -55,6 +55,11 @@ public class Bullet extends GameObject implements Weapons {
     }
 
     @Override
+    public void move(int x) {
+
+    }
+
+    @Override
     public void draw(Graphics g) {
         g.drawImage(img, x, y, null);
     }

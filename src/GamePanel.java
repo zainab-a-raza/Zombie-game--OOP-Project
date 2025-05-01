@@ -8,7 +8,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     Timer timer;
     LevelManager levelManager;
     int key;
-
+    static boolean onLadder = false;
 
     ImageIcon startImage = new ImageIcon(getClass().getResource("./startButton.png"));
 
@@ -99,8 +99,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
 
-
-
     }
 
     @Override
@@ -115,7 +113,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         Level currentLevel = levelManager.getCurrentLevel();
         Warrior m1 = currentLevel.m1;
         ArrayList<Ladder>ladders =currentLevel.ladders;
-        Rectangle player= currentLevel.player;
+        Rectangle player= new Rectangle(m1.x, m1.y, 82, 134);
 
         key = e.getKeyCode();
         if (key == KeyEvent.VK_LEFT) {
@@ -126,9 +124,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
         /// ree
         if (key == KeyEvent.VK_SPACE) {
-            if (currentLevel.grenade1.isGrenadeInHand()) {
-                currentLevel.grenade1.setGrenadeInHand(false);
-                currentLevel.grenade1.setActive(true);  // only throw when pressed
+            if (currentLevel.grenade.isGrenadeInHand()) {
+                currentLevel.grenade.setGrenadeInHand(false);
+                currentLevel.grenade.setActive(true);  // only throw when pressed
             }
             else if (!currentLevel.bulletActive && currentLevel.bulletcount > 0) {
                 currentLevel.bulletActive = true;
@@ -136,16 +134,30 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        int step =10;
-        for(Ladder l:ladders){
+        boolean isOnLadder = false;
+        int step = 10;
+
+        for (Ladder l : ladders) {
             Rectangle ladderBox = new Rectangle((l.x), l.y, l.width, l.height);
-            if(key == KeyEvent.VK_UP && player.intersects(ladderBox) && player.y>l.y){
-                m1.move(0,-step);
-            }
-            if(key == KeyEvent.VK_DOWN && player.intersects(ladderBox) && (player.y+player.height<l.y +l.height)){
-                m1.move(0,step);
+
+            if (player.intersects(ladderBox)) {
+                isOnLadder = true;
+
+                if (key == KeyEvent.VK_UP && player.y + player.height > l.y) {
+                    m1.move(0, -step);
+                    System.out.println("Command up" + step + " " + m1.y);
+                }
+
+                if (key == KeyEvent.VK_DOWN && player.y + player.height < l.y + l.height) {
+                    m1.move(0, step);
+                    System.out.println("Command down" + step + " " + m1.y);
+                }
+                break;
             }
         }
+
+        GamePanel.onLadder = isOnLadder;
+
     }
 
     @Override

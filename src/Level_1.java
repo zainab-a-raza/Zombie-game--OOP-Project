@@ -68,8 +68,5 @@ public class Level_1 extends Level{
         zombies.add(basicZombie);
         zombies.add(basicZombie2);
 
-
     }
-
-
 }
