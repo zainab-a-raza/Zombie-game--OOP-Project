@@ -20,6 +20,10 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     JButton retryButton = new JButton(retry);
     JButton pauseButton = new JButton(pause);
 
+    JTextField playerNameBox =  new JTextField();
+    JLabel playerNameLabel = new JLabel("Enter player name");
+
+    String playerName;
 
     boolean startGame = false;
     public GamePanel() {
@@ -32,7 +36,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         levelManager = new LevelManager();
 
         JButton startButton = new JButton(startImage);
-        startButton.setBounds(610,500,250,94);
+        startButton.setBounds(610,600,250,94);
         startButton.setOpaque(false);
         startButton.setContentAreaFilled(false);
         startButton.setBorderPainted(false);
@@ -47,16 +51,36 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         retryButton.setContentAreaFilled(false);
         retryButton.setBorderPainted(false);
 
+        playerNameBox.setBounds(500,520,500,50);
+        playerNameBox.setForeground(Color.GREEN);
+        playerNameBox.setBackground(Color.BLACK);
+        playerNameBox.setCaretColor(Color.GREEN);
+        playerNameBox.setFont(new Font("Arial", Font.PLAIN,16));
+        playerNameBox.setOpaque(false);
+        playerNameBox.setBorder(new javax.swing.border.LineBorder(Color.GREEN,2,true));
+        playerNameLabel.setHorizontalAlignment(JTextField.CENTER);
+
+        playerNameLabel.setForeground(Color.WHITE);
+        playerNameLabel.setFont(new Font("Arial", Font.PLAIN,16));
+        playerNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        playerNameLabel.setBounds(500,480,500,50);
+        this.add(playerNameLabel);
+
+
 
         timer = new Timer(16, this); // roughly 60 FPS
         this.setLayout(null);
         this.add(startButton);
+        this.add(playerNameBox);
         startButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 startGame = true;
                 timer.start();
                 remove(startButton);
+                remove(playerNameBox);
+                remove(playerNameLabel);
+                playerName = playerNameBox.getText();
             }
         });
 
@@ -97,7 +121,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             levelManager.draw(g);
             this.add(pauseButton);
         }
-
 
     }
 
