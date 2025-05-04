@@ -364,11 +364,11 @@ public class Level extends JPanel{
             }
         }
 
-//        for (Grenade grenade1:grenades){
-//            if (grenade1.active){
-//                grenade1.draw(g);
-//            }
-//        }
+        for (Grenade grenade1:grenades){
+            if (grenade1.active){
+                grenade1.draw(g);
+            }
+        }
 
         for (ZombieBase z : zombies) {
             if (z.zombieAlive) {
@@ -541,12 +541,6 @@ public class Level extends JPanel{
             }
         }
         return true;
-//        for (ZombieBase z : zombies) {
-//            if (z.zombieAlive) {
-//                return false;
-//            }
-//        }
-//        return true;
     }
 
 

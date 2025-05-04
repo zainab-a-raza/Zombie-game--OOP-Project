@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
@@ -116,6 +118,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
             g.drawImage(startScreen,0,0,1500,900,null);
         }else if(startGame== true && levelManager.gamelost == true){
             g.drawImage(endScreen,0,0,1500,900,null);
+            saveScore();
             this.add(retryButton);
         }
         else{
@@ -189,4 +192,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) { }
+
+    private boolean scoresaved=false;
+    public void saveScore(){
+        if(scoresaved){return;}
+        Level currentLevel = levelManager.getCurrentLevel();
+        try(FileWriter fw = new FileWriter("scores.txt",true)){
+            fw.write(playerName + " - " + levelManager.getCurrentLevel().score);
+            scoresaved =true;
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
 }

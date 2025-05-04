@@ -2,7 +2,7 @@
  import java.awt.*;
 
  public class Grenade extends GameObject implements Weapons{
-     private boolean active = false;   // only for showing stuff
+     boolean active = false;   // only for showing stuff
      private boolean grenadeInHand = false;
      private boolean triggerExplosion = false;
      private int explosionTimer = 0;
