@@ -1,5 +1,5 @@
 import java.awt.*;
-
+//
 public class BasicZombie extends ZombieBase {
 
     public BasicZombie(int x, int y, String path) {
