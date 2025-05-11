@@ -21,7 +21,7 @@ public class LevelManager {
             currentLevel= new Level_3();
         }
         else if(levelNumber >3){
-            currentLevel= null;
+            //currentLevel= null;
             hasWon= true;
         }
     }
@@ -36,18 +36,6 @@ public class LevelManager {
             g.setFont(new Font("Arial", Font.BOLD, 100));
             g.drawString("YOU WON!", 400, 450);
         }
-
-//
-//wihout reset on 1
-//        if (currentLevel != null && hasWon == false) {
-//            currentLevel.draw(g);
-//        } else{
-//            g.setColor(Color.BLACK); // Paint background black
-//            g.fillRect(0, 0, 1500, 900);
-//            g.setColor(Color.GREEN);
-//            g.setFont(new Font("Arial", Font.BOLD, 100));
-//            g.drawString("YOU WON!", 400, 450);
-//        }
     }
 
 

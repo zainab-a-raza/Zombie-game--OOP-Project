@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -114,24 +116,28 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(startGame==false && levelManager.gamelost == false){
+        if(startGame==false && levelManager.gamelost == false && levelManager.hasWon==false){
             g.drawImage(startScreen,0,0,1500,900,null);
-        }else if(startGame== true && levelManager.gamelost == true){
+        }else if(startGame== true && levelManager.gamelost == true && levelManager.hasWon==false ){
             g.drawImage(endScreen,0,0,1500,900,null);
             saveScore();
             this.add(retryButton);
-        }
-        else{
+        } else{
             levelManager.draw(g);
             this.add(pauseButton);
         }
-
+        displayScore(g);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         levelManager.update();
+        if(levelManager.hasWon == true){
+            saveScore();
+        }
         repaint();
+
+
     }
 
     // Handle key events (left, right, jump, shoot)
@@ -193,16 +199,44 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyTyped(KeyEvent e) { }
 
-    private boolean scoresaved=false;
+    private boolean scoresaved =false;
     public void saveScore(){
         if(scoresaved){return;}
         Level currentLevel = levelManager.getCurrentLevel();
         try(FileWriter fw = new FileWriter("scores.txt",true)){
-            fw.write(playerName + " - " + levelManager.getCurrentLevel().score);
+
+            fw.write(playerName + " - " + levelManager.getCurrentLevel().score+"\n");
             scoresaved =true;
         }catch (IOException e){
             System.out.println(e.getMessage());
         }
 
+    }
+
+    public void displayScore(Graphics g){
+        ArrayList<String> scores = new ArrayList<>();
+        try(BufferedReader bf = new BufferedReader(new FileReader("scores.txt"))){
+            String line;
+            while ((line = bf.readLine()) != null) {
+                scores.add(line);
+            }
+
+            scores.sort((a, b) -> {
+                int scoreA = Integer.parseInt(a.split(" - ")[1]);
+                int scoreB = Integer.parseInt(b.split(" - ")[1]);
+                return Integer.compare(scoreB, scoreA);
+            });
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 18));
+            g.drawString("Top 5 Players:", 1250, 50);
+
+            for (int i = 0; i < Math.min(5, scores.size()); i++) {
+                g.drawString((i+1) + ". " + scores.get(i), 1250, 80 + i * 25);
+            }
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }

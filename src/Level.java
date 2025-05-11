@@ -284,7 +284,7 @@ public class Level extends JPanel{
     Grenade grenade = new Grenade(m1.x, m1.y, "/grenade.png" );
     boolean bulletActive = false;
     boolean warriorAlive = true;
-    protected int score = 0;
+    protected static int score = 0;
     protected int bulletcount = 5;
     protected int grenadecount = 1;
     protected int gameOver = 1;
@@ -298,30 +298,31 @@ public class Level extends JPanel{
     JLabel displayHealth=new JLabel();
 
     Level(){
-        displayScore.setText("Score: " + score);
-        displayScore.setFont(new Font("MV boli", Font.PLAIN, 20));
-        displayScore.setForeground(new Color(0xFFFFFF));
-        displayScore.setBounds(800, 800, 20, 20);
-        this.add(displayScore);
 
-        displayBullets.setText("Bullet Count: " + bulletcount);
-        displayBullets.setFont(new Font("MV boli", Font.PLAIN, 20));
-        displayBullets.setForeground(new Color(0xFFFFFF));
-        displayBullets.setBounds(800, 800, 20, 20);
-        this.add(displayBullets);
-
-        displayGrenades.setText("Grenade Count: " + grenadecount);
-        displayGrenades.setFont(new Font("MV boli", Font.PLAIN, 20));
-        displayGrenades.setForeground(new Color(0xFFFFFF));
-        displayGrenades.setBounds(800, 800, 20, 20);
-        this.add(displayGrenades);
-
-        displayHealth.setText("Health: "+m1.health);
-        displayHealth.setFont(new Font("MV boli", Font.PLAIN, 20));
-        displayHealth.setForeground(new Color(0xFFFFFF));
-        displayHealth.setBounds(800, 830, 20, 20);
-        this.add(displayHealth);
-        grenades.add(grenade);
+//        displayScore.setText("Score: " + score);
+//        displayScore.setFont(new Font("MV boli", Font.PLAIN, 20));
+//        displayScore.setForeground(new Color(0xFFFFFF));
+//        displayScore.setBounds(startX, 20, 20, 20);
+//        this.add(displayScore);
+//
+//        displayBullets.setText("Bullet Count: " + bulletcount);
+//        displayBullets.setFont(new Font("MV boli", Font.PLAIN, 20));
+//        displayBullets.setForeground(new Color(0xFFFFFF));
+//        displayBullets.setBounds(startX+spacing, 20, 20, 20);
+//        this.add(displayBullets);
+//
+//        displayGrenades.setText("Grenade Count: " + grenadecount);
+//        displayGrenades.setFont(new Font("MV boli", Font.PLAIN, 20));
+//        displayGrenades.setForeground(new Color(0xFFFFFF));
+//        displayGrenades.setBounds(startX+2*spacing, 20, 20, 20);
+//        this.add(displayGrenades);
+//
+//        displayHealth.setText("Health: "+m1.health);
+//        displayHealth.setFont(new Font("MV boli", Font.PLAIN, 20));
+//        displayHealth.setForeground(new Color(0xFFFFFF));
+//        displayHealth.setBounds(startX+ 3*spacing, 20, 20, 20);
+//        this.add(displayHealth);
+//        grenades.add(grenade);
     }
     public void draw(Graphics g){
         g.drawImage(bg, 0, 0, 1500, 900, this);
@@ -379,13 +380,14 @@ public class Level extends JPanel{
         for(Ladder l: ladders){
             l.draw(g);
         }
-
+        int startX=350;
+        int spacing =175;
         g.setColor(Color.WHITE);
         g.setFont(new Font("MV Boli", Font.PLAIN, 20));
-        g.drawString("Score: " + score, 1200, 50); // Adjust x,y as you want
-        g.drawString("Bullet Count: " + bulletcount, 1200, 80);
-        g.drawString("Health: " + Math.max(0, m1.health), 1200, 110);
-        g.drawString("Grenade Count: "+grenadecount,1200,140);
+        g.drawString("Score: " + score, startX, 50);
+        g.drawString("Bullet Count: " + bulletcount, startX+spacing, 50);
+        g.drawString("Health: " + Math.max(0, m1.health), startX+ 2*spacing, 50);
+        g.drawString("Grenade Count: "+grenadecount,startX+ 3*spacing,50);
     }
 
 
@@ -523,7 +525,7 @@ public class Level extends JPanel{
                     }
                 }
             }
-            System.out.println("Cy "+ cy+" m1.y: " + m1.y);
+//            System.out.println("Cy "+ cy+" m1.y: " + m1.y);
 
             if(GamePanel.onLadder) {
                 cy = 0; // cancel gravity
