@@ -126,16 +126,14 @@ import java.util.Objects;
 import javax.swing.*;
 
 public class Level_2 extends Level {
-    Platform plat1, plat2, plat3, plat4, plat5;
-    Bullet bullet2, bullet3, bullet4, bullet5, bullet6;
-    Ladder l1, l2, l3, l4;
+    private Platform plat1, plat2, plat3, plat4, plat5;
+    private Bullet bullet2, bullet3, bullet4, bullet5, bullet6;
+    private Ladder l1, l2, l3, l4;
 
-    BasicZombie basicZombie;
-    BasicZombie basicZombie2;
-    FastZombie fastZombie;
-    FastZombie fastZombie2;
-
-
+    private BasicZombie basicZombie;
+    private BasicZombie basicZombie2;
+    private FastZombie fastZombie;
+    private FastZombie fastZombie2;
 
     Level_2() {
 
@@ -181,10 +179,11 @@ public class Level_2 extends Level {
         bullets.add(bullet4);
         bullets.add(bullet5);
 
-        basicZombie = new BasicZombie(700, 200-61, "/zombies-01.png");
-        basicZombie2 = new BasicZombie(700, 500, "/zombies-01.png");
-        fastZombie = new FastZombie((1500 / 2) - (699/ 2), 300,"/zombies-08.png");
-        fastZombie2 = new FastZombie((1500 / 2) - (699/ 2), 670,"/zombies-08.png");
+
+        basicZombie = new BasicZombie(700, 200 - 110, "/zombies-01.png");
+        basicZombie2 = new BasicZombie(700, 450 - 110, "/zombies-01.png");
+        fastZombie = new FastZombie(700, 450 - 125, "/zombies-08.png");
+        fastZombie2 = new FastZombie(5, 700 - 125, "/zombies-08.png");
 
 
         zombies.add(basicZombie);

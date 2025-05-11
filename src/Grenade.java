@@ -2,19 +2,21 @@
  import java.awt.*;
 
  public class Grenade extends GameObject implements Weapons{
-     boolean active = false;   // only for showing stuff
+     private boolean active = false;   // only for showing stuff
      private boolean grenadeInHand = false;
      private boolean triggerExplosion = false;
      private int explosionTimer = 0;
-     Rectangle explosionRect = new Rectangle(x, y, 372, 280);
-     Image explosionImg;
+     private Rectangle explosionRect = new Rectangle(x, y, 399, 300);
+     private Image explosionImg;
      boolean display = true;
 
      public Grenade(int x, int y, String path) {
          super(x, y, path);
          explosionImg = new ImageIcon(getClass().getResource("/explosion.png")).getImage();
      }
-
+    public boolean getActive(){
+         return active;
+    }
      public void setTriggerExplosion(boolean triggerExplosion) {
          this.triggerExplosion = triggerExplosion;
          if (triggerExplosion) {
@@ -48,7 +50,7 @@
          if (triggerExplosion) {
              drawExplosion(g);
          } else {
-             g.drawImage(img, x, y, null); // normal grenade
+             g.drawImage(img, x, y-10, null); // normal grenade
          }
      }
 

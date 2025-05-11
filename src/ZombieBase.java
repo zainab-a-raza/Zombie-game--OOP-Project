@@ -2,6 +2,9 @@ import java.awt.*;
 
 public abstract class ZombieBase extends GameObject {
     ///  shared variables
+    int height;
+    int width;
+
     protected int dx = 2;
     protected boolean zombieAlive = true;
     protected boolean justHitPlayer = false;

@@ -2,8 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameObject {
-    int x,y;
-    Image img;
+    protected int x,y;
+    protected Image img;
 
     public GameObject(int x, int y, String path) {
         img = new ImageIcon(getClass().getResource(path)).getImage();

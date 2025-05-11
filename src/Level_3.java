@@ -72,12 +72,13 @@ import java.util.Random;
 import java.util.Objects;
 
 public class Level_3 extends Level{
-    Platform plat1, plat2, plat3, plat4, plat5;
-    Bullet bullet2, bullet3, bullet4, bullet5, bullet6;
-    Ladder l1, l2, l3, l4;
+    private Platform plat1, plat2, plat3, plat4, plat5;
+    private Bullet bullet2, bullet3, bullet4, bullet5, bullet6;
+    private Ladder l1, l2, l3, l4;
+    private int zombieCount=0;
 
-    JumpingZombie jumpingZombie;
-    FastZombie fastZombie;
+    private JumpingZombie jumpingZombie;
+    private FastZombie fastZombie;
 
     private Timer bulletSpawnTimer;
     private Timer zombieSpawnTimer;
@@ -86,7 +87,7 @@ public class Level_3 extends Level{
 
     Level_3() {
 
-        bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg_lvl2.png"))).getImage();
+        bg = new ImageIcon(Objects.requireNonNull(getClass().getResource("./bg_3.png"))).getImage();
 
         // Top platforms
         plat1 = new Platform(0, 200, "./longPlatform.png");                               // Top left
@@ -117,15 +118,15 @@ public class Level_3 extends Level{
         ladders.add(l4);
 
         bullet2 = new Bullet(50, 600, "/bullet.png");
-        bullet3 = new Bullet(50, 300, "/bullet.png");
+       // bullet3 = new Bullet(50, 300, "/bullet.png");
         bullet4 = new Bullet(750, 100, "/bullet.png");
-        bullet5 = new Bullet(195, 450, "/bullet.png");
+      //  bullet5 = new Bullet(195, 450, "/bullet.png");
 
         /// Bullets
         bullets.add(bullet2);
-        bullets.add(bullet3);
+        //bullets.add(bullet3);
         bullets.add(bullet4);
-        bullets.add(bullet5);
+        //bullets.add(bullet5);
 
         jumpingZombie = new JumpingZombie(300, 800, "/jumping zombie.png");
         fastZombie = new FastZombie((1500 / 2) - (699/ 3), 400,"/zombies-08.png");
@@ -133,31 +134,48 @@ public class Level_3 extends Level{
         zombies.add(jumpingZombie);
         zombies.add(fastZombie);
 
-        bulletSpawnTimer = new Timer(10000, e -> spawnRandomBullet());
-        zombieSpawnTimer = new Timer(15000, e -> spawnRandomZombie());
+        bulletSpawnTimer = new Timer(5000, e -> spawnRandomBullet());
+        zombieSpawnTimer = new Timer(7000, e -> spawnRandomZombie());
 
         bulletSpawnTimer.start();
         zombieSpawnTimer.start();
     }
 
     private void spawnRandomBullet() {
-        int x = random.nextInt(1400);
-        int y = random.nextInt(800);
-        bullets.add(new Bullet(x, y, "/bullet.png"));
+            Platform randomPlatform = platforms.get(random.nextInt(platforms.size()));
+
+            int x = random.nextInt(randomPlatform.getWidth()) + randomPlatform.getX();
+
+            int y = randomPlatform.getY() - 25;
+
+            bullets.add(new Bullet(x, y, "/bullet.png"));
     }
     private void spawnRandomZombie() {
-        int x = random.nextInt(1400);
-        int y = random.nextInt(800);
-        int zombieType = random.nextInt(3);
+        if (zombieCount < 7) {
+            Platform randomPlatform = platforms.get(random.nextInt(platforms.size()));
+            int x = random.nextInt(randomPlatform.getWidth()) + randomPlatform.getX();
 
-        if (zombieType == 0) {
-            zombies.add(new BasicZombie(x, y, "/zombies-01.png"));
-        } else if (zombieType==1) {
-            zombies.add(new JumpingZombie(x, y, "/jumping zombie.png"));
-        } else {
-            zombies.add(new FastZombie(x, y, "/zombies-08.png"));
+            int zombieType = random.nextInt(3);
+            int y;
+
+            if (zombieType == 0) {
+                // BasicZombie
+                y = randomPlatform.getY() - 110; //uski apni height
+                zombies.add(new BasicZombie(x, y, "/zombies-01.png"));
+            } else if (zombieType == 1) {
+                // JumpingZombie
+                y = randomPlatform.getY() - 110;
+                zombies.add(new JumpingZombie(x, y, "/jumping zombie.png"));
+            } else {
+                // FastZombie
+                y = randomPlatform.getY() - 125;
+                zombies.add(new FastZombie(x, y, "/zombies-08.png"));
+            }
+
+            zombieCount++;
         }
     }
+
     @Override
     public void reset() {
         super.reset();

@@ -1,12 +1,16 @@
 public class JumpingZombie extends ZombieBase {
 
-    double dy = 0;
-    double gravity = 0.5;
-    double jumpForce = -10;
+    private double dy = 0;
+    private double gravity = 0.5;
+    private double jumpForce = -10;
+     int height = 100;
+     int width = 99;
 
     public JumpingZombie(int x, int y, String path) {
         super(x, y, path);
         dx = 5;
+        height = 100;
+        width = 99;
     }
 
     @Override

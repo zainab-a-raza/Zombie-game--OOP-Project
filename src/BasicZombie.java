@@ -4,6 +4,8 @@ public class BasicZombie extends ZombieBase {
 
     public BasicZombie(int x, int y, String path) {
         super(x, y, path);
+        height = 100;
+        width = 87;
     }
 
     @Override

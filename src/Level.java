@@ -270,32 +270,34 @@ public class Level extends JPanel{
     protected int platformWidth = 699;
 
 
-    ArrayList<Platform> platforms = new ArrayList<>();
-    ArrayList<Bullet> bullets = new ArrayList<>();
-    ArrayList<Grenade> grenades=new ArrayList<>();
+    protected ArrayList<Platform> platforms = new ArrayList<>();
+    protected ArrayList<Bullet> bullets = new ArrayList<>();
     //ArrayList<HealthBooster> healthBoosters=new ArrayList<>();
 
     /// POLYMORPHISM BELOW! YAYYY! ZombieBase array with child objects stored
-    ArrayList<ZombieBase> zombies = new ArrayList<>();
-    ArrayList<Ladder> ladders = new ArrayList<>();
-    boolean intersectplatform = false;
-    Warrior m1= new Warrior(0, 0, "/player.png");
-    Bullet bullet = new Bullet(m1.x, m1.y, "/bullet.png");
-    Grenade grenade = new Grenade(m1.x, m1.y, "/grenade.png" );
-    boolean bulletActive = false;
-    boolean warriorAlive = true;
+    protected ArrayList<ZombieBase> zombies = new ArrayList<>();
+    protected ArrayList<Ladder> ladders = new ArrayList<>();
+
+    protected Warrior m1= new Warrior(0, 0, "/cowgirl.png");
+    protected Bullet bullet = new Bullet(m1.x, m1.y, "/bullet.png");
+
+    ///
+    protected Grenade grenade = new Grenade((frameWidth / 2)-50, 365, "/grenade.png" );
+    ///
+
+    protected boolean bulletActive = false;
+    protected boolean warriorAlive = true;
     protected static int score = 0;
     protected int bulletcount = 5;
-    protected int grenadecount = 1;
     protected int gameOver = 1;
     Image bg;//background image
 
-    Rectangle player;
+    protected Rectangle player;
 
-    JLabel displayScore = new JLabel();
-    JLabel displayBullets = new JLabel();
-    JLabel displayGrenades= new JLabel();
-    JLabel displayHealth=new JLabel();
+//    JLabel displayScore = new JLabel();
+//    JLabel displayBullets = new JLabel();
+//    JLabel displayGrenades= new JLabel();
+//    JLabel displayHealth=new JLabel();
 
     Level(){
 
@@ -327,16 +329,16 @@ public class Level extends JPanel{
     public void draw(Graphics g){
         g.drawImage(bg, 0, 0, 1500, 900, this);
 
-        for (Grenade grenade:grenades){
-            if (grenadecount>0){
+        //for (Grenade grenade:grenades){
+         //   if (grenadecount>0){
                 if(grenade.display){
                     grenade.draw(g);
                 }
                 if(grenade.isTriggerExplosion()){
                     grenade.drawExplosion(g);
                 }
-            }
-        }
+
+
 //        for (HealthBooster healthBooster:healthBoosters){
 //            if (healthBooster.getisActive()){
 //                healthBooster.draw(g);
@@ -365,11 +367,11 @@ public class Level extends JPanel{
             }
         }
 
-        for (Grenade grenade1:grenades){
-            if (grenade1.active){
-                grenade1.draw(g);
+        ///
+            if (grenade.getActive()){
+                grenade.draw(g);
             }
-        }
+        ///
 
         for (ZombieBase z : zombies) {
             if (z.zombieAlive) {
@@ -386,8 +388,8 @@ public class Level extends JPanel{
         g.setFont(new Font("MV Boli", Font.PLAIN, 20));
         g.drawString("Score: " + score, startX, 50);
         g.drawString("Bullet Count: " + bulletcount, startX+spacing, 50);
-        g.drawString("Health: " + Math.max(0, m1.health), startX+ 2*spacing, 50);
-        g.drawString("Grenade Count: "+grenadecount,startX+ 3*spacing,50);
+        g.drawString("Health: " + Math.max(0, m1.getHealth()), startX+ 2*spacing, 50);
+       // g.drawString("Grenade Count: "+grenadecount,startX+ 3*spacing,50);
     }
 
 
@@ -454,13 +456,13 @@ public class Level extends JPanel{
                 if (player.intersects(z1Rect)) {
                     if (!z.justHitPlayer) {
                         // Only damage player if this is a new collision
-                        m1.health -= 10;
+                        m1.changeHealth(-10);
                         z.justHitPlayer = true;
                         z.dx *= -1;  // Make zombie turn around
 
-                        if (m1.health <= 0) {
+                        if (m1.getHealth() <= 0) {
                             warriorAlive = false;
-                            m1.health = 0;
+                            m1.setHealth(0);
                         }
                     }
                 } else {
@@ -513,18 +515,18 @@ public class Level extends JPanel{
                     }
                 }
             }
-            Iterator<Grenade> graenadeIterator = grenades.iterator();
-            while (graenadeIterator.hasNext()) {
-                Grenade g=graenadeIterator.next();
-                if (g.isActive()) {
-                    Rectangle grenadeBorder = new Rectangle(g.x, g.y, 25, 25);
-                    if (player.intersects(grenadeBorder)) {
-                        g.setActive(false);
-                        grenadecount++;
-                        graenadeIterator.remove();
-                    }
-                }
-            }
+          //  Iterator<Grenade> graenadeIterator = grenades.iterator();
+//            while (graenadeIterator.hasNext()) {
+//                Grenade g=graenadeIterator.next();
+//                if (g.isActive()) {
+//                    Rectangle grenadeBorder = new Rectangle(g.x, g.y, 25, 25);
+//                    if (player.intersects(grenadeBorder)) {
+//                        g.setActive(false);
+//                        grenadecount++;
+//                        graenadeIterator.remove();
+//                    }
+//                }
+
 //            System.out.println("Cy "+ cy+" m1.y: " + m1.y);
 
             if(GamePanel.onLadder) {
@@ -547,7 +549,7 @@ public class Level extends JPanel{
 
 
     public boolean isGameOver() {
-        if(m1.health <= 0){
+        if(m1.getHealth() <= 0){
             return true;
         }else{
             return false;

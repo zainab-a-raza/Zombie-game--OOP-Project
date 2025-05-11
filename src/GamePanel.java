@@ -9,27 +9,27 @@ import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements ActionListener, KeyListener {
 
-    Timer timer;
-    LevelManager levelManager;
-    int key;
-    static boolean onLadder = false;
+    private Timer timer;
+    private LevelManager levelManager;
+    private int key;
+    protected static boolean onLadder = false;
 
-    ImageIcon startImage = new ImageIcon(getClass().getResource("./startButton.png"));
+    private ImageIcon startImage = new ImageIcon(getClass().getResource("./startButton.png"));
 
-    ImageIcon retry = new ImageIcon(getClass().getResource("./retryButton.png"));
-    ImageIcon pause = new ImageIcon(getClass().getResource("./pauseButton.png"));
-    Image startScreen = new ImageIcon(getClass().getResource("./startScreen.png")).getImage();
-    Image endScreen = new ImageIcon(getClass().getResource("./endScreen.png")).getImage();
+    private ImageIcon retry = new ImageIcon(getClass().getResource("./retryButton.png"));
+    private ImageIcon pause = new ImageIcon(getClass().getResource("./pauseButton.png"));
+    private Image startScreen = new ImageIcon(getClass().getResource("./startScreen.png")).getImage();
+    private Image endScreen = new ImageIcon(getClass().getResource("./endScreen.png")).getImage();
     JButton startButton;
-    JButton retryButton = new JButton(retry);
-    JButton pauseButton = new JButton(pause);
+    private JButton retryButton = new JButton(retry);
+    private JButton pauseButton = new JButton(pause);
 
-    JTextField playerNameBox =  new JTextField();
-    JLabel playerNameLabel = new JLabel("Enter player name");
+    private JTextField playerNameBox =  new JTextField();
+    private JLabel playerNameLabel = new JLabel("Enter player name");
 
-    String playerName;
+    private String playerName;
+    private boolean startGame = false;
 
-    boolean startGame = false;
     public GamePanel() {
 
         this.setPreferredSize(new Dimension(1500, 900));
@@ -171,7 +171,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         int step = 10;
 
         for (Ladder l : ladders) {
-            Rectangle ladderBox = new Rectangle((l.x), l.y, l.width, l.height);
+            Rectangle ladderBox = new Rectangle((l.x), l.y, l.getWidth(), l.getHeight());
 
             if (player.intersects(ladderBox)) {
                 isOnLadder = true;
@@ -181,7 +181,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                     System.out.println("Command up" + step + " " + m1.y);
                 }
 
-                if (key == KeyEvent.VK_DOWN && player.y + player.height < l.y + l.height) {
+                if (key == KeyEvent.VK_DOWN && player.y + player.height < l.y + l.getHeight()) {
                     m1.move(0, step);
                     System.out.println("Command down" + step + " " + m1.y);
                 }
@@ -212,6 +212,30 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }
 
     }
+///  getter setters
+    public LevelManager getLevelManager() {
+        return levelManager;
+    }
+
+    public int getKey() {
+        return key;
+    }
+
+    public static boolean isOnLadder() {
+        return onLadder;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public boolean isScoresaved() {
+        return scoresaved;
+    }
+
+    public boolean isStartGame() {
+        return startGame;
+    }
 
     public void displayScore(Graphics g){
         ArrayList<String> scores = new ArrayList<>();
@@ -238,5 +262,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         }catch (IOException e){
             e.printStackTrace();
         }
+
     }
 }

@@ -2,10 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LevelManager {
-    boolean hasWon = false;
-    boolean gamelost= false;
-    Level currentLevel;
-    int levelNumber=1;
+    protected boolean hasWon = false;
+    protected  boolean gamelost= false;
+    protected Level currentLevel;
+    protected int levelNumber=1;
 
 
     LevelManager() {
@@ -57,8 +57,5 @@ public class LevelManager {
                 loadLevel(levelNumber);
             }
         }
-
-
     }
-
 }

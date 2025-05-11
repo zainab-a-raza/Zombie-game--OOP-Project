@@ -1,10 +1,11 @@
 import java.awt.*;
 
 public class FastZombie extends ZombieBase {
-
     public FastZombie(int x, int y, String path) {
         super(x, y, path);
-        dx = 5;
+        height = 143;
+        width = 125;
+        dx = 4;
     }
 
     @Override
