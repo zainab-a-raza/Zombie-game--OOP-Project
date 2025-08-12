@@ -285,6 +285,10 @@ public class Level extends JPanel{
     protected Grenade grenade = new Grenade((frameWidth / 2)-50, 365, "/grenade.png" );
     ///
 
+    private Image scoreboard = new ImageIcon(getClass().getResource("./score.png")).getImage();
+    private Image bulletboard = new ImageIcon(getClass().getResource("./bulletcount.png")).getImage();
+    private Image healthboard = new ImageIcon(getClass().getResource("./health.png")).getImage();
+
     protected boolean bulletActive = false;
     protected boolean warriorAlive = true;
     protected static int score = 0;
@@ -339,14 +343,9 @@ public class Level extends JPanel{
                 }
 
 
-//        for (HealthBooster healthBooster:healthBoosters){
-//            if (healthBooster.getisActive()){
-//                healthBooster.draw(g);
-//            }
-//        }
         if (warriorAlive) {
             m1.draw(g);
-            if(bulletcount>0) {
+            if(bulletcount>0 && !grenade.isGrenadeInHand()) {
                 bullet.draw(g);  // summon bullet
             }
         }
@@ -382,14 +381,20 @@ public class Level extends JPanel{
         for(Ladder l: ladders){
             l.draw(g);
         }
-        int startX=350;
+        int startX=500;
         int spacing =175;
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("MV Boli", Font.PLAIN, 20));
-        g.drawString("Score: " + score, startX, 50);
-        g.drawString("Bullet Count: " + bulletcount, startX+spacing, 50);
-        g.drawString("Health: " + Math.max(0, m1.getHealth()), startX+ 2*spacing, 50);
-       // g.drawString("Grenade Count: "+grenadecount,startX+ 3*spacing,50);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("MV Boli", Font.PLAIN, 18));
+
+        g.drawImage(scoreboard,450+60,10,108,55,null);
+        g.drawString(String.valueOf(score), 450+54+70, 42);
+
+        g.drawImage(bulletboard,578+20+60,10,108,55,null);
+        g.drawString(String.valueOf(bulletcount), 598+54+70, 42);
+
+        g.drawImage(healthboard,696+40+65,10,108,55,null);
+        g.drawString(String.valueOf(Math.max(0, m1.getHealth())), 736+54+70, 42);
+
     }
 
 

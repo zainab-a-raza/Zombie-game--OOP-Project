@@ -5,7 +5,7 @@ public abstract class ZombieBase extends GameObject {
     int height;
     int width;
 
-    protected int dx = 2;
+    protected int dx = 12;
     protected boolean zombieAlive = true;
     protected boolean justHitPlayer = false;
     // has x,y,img cuz of GameObj

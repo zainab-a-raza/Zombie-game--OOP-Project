@@ -20,6 +20,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
     private ImageIcon pause = new ImageIcon(getClass().getResource("./pauseButton.png"));
     private Image startScreen = new ImageIcon(getClass().getResource("./startScreen.png")).getImage();
     private Image endScreen = new ImageIcon(getClass().getResource("./endScreen.png")).getImage();
+
+    private Image scoreboard = new ImageIcon(getClass().getResource("./leaderboard.png")).getImage();
     JButton startButton;
     private JButton retryButton = new JButton(retry);
     private JButton pauseButton = new JButton(pause);
@@ -45,7 +47,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
         startButton.setContentAreaFilled(false);
         startButton.setBorderPainted(false);
 
-        pauseButton.setBounds(1400,50,58,56);
+        pauseButton.setBounds(50,20,45,43);
         pauseButton.setOpaque(false);
         pauseButton.setContentAreaFilled(false);
         pauseButton.setBorderPainted(false);
@@ -251,12 +253,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener {
                 return Integer.compare(scoreB, scoreA);
             });
 
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 18));
-            g.drawString("Top 5 Players:", 1250, 50);
+            g.setColor(Color.DARK_GRAY);
+            g.setFont(new Font("Arial", Font.BOLD, 16));
+            g.drawImage(scoreboard, 1300, 20,170,170,null);
 
             for (int i = 0; i < Math.min(5, scores.size()); i++) {
-                g.drawString((i+1) + ". " + scores.get(i), 1250, 80 + i * 25);
+                g.drawString((i+1) + ". " + scores.get(i), 1340, 65 + i * 25);
             }
 
         }catch (IOException e){
